@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@RestController("/films")
+@RestController
+@RequestMapping("/films")
 public class FilmController {
 
     private final Map<Integer, Film> films = new HashMap<>();
