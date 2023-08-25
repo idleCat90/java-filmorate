@@ -17,6 +17,7 @@ import java.util.Map;
 public class FilmController {
 
     private final Map<Integer, Film> films = new HashMap<>();
+    private int id = 0;
 
     @GetMapping
     private List<Film> getAllFilms() {
@@ -25,22 +26,23 @@ public class FilmController {
 
     @PostMapping
     private Film addFilm(@RequestBody Film film) {
-//        if (films.containsKey(film.getId())) {
-//            log.error("Фильм уже есть в списке: {}", film.toString());
-//            throw new ValidationException("Такой фильм уже есть в списке.");
-//        }
         if (isValid(film)) {
-            log.info("Добавлен фильм: {}", film);
+            film.setId(++id);
             films.put(film.getId(), film);
+            log.info("Добавлен фильм: {}", film);
         }
         return film;
     }
 
     @PutMapping
     private Film updateFilm(@RequestBody Film film) {
+        if (!films.containsKey(film.getId())) {
+            log.error("Некорректный id фильма: {}", film);
+            throw new ValidationException("Нет фильма с таким id");
+        }
         if (isValid(film)) {
-            log.info("Обновлён фильм: {}", film);
             films.put(film.getId(), film);
+            log.info("Обновлён фильм: {}", film);
         }
         return film;
     }
@@ -58,7 +60,7 @@ public class FilmController {
             log.error("Некорректная дата релиза: {}", film);
             throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года.");
         }
-        if (film.getDuration().isNegative() || film.getDuration().isZero()) {
+        if (film.getDuration() <= 0) {
             log.error("Некорректная продролжительность фильма: {}", film);
             throw new ValidationException("Продолжительность фильма должна быть положительной.");
         }

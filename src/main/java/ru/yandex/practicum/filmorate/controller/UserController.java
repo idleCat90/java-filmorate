@@ -17,6 +17,7 @@ import java.util.Map;
 public class UserController {
 
     private final Map<Integer, User> users = new HashMap<>();
+    private int id = 0;
 
     @GetMapping
     private List<User> getAllUsers() {
@@ -25,22 +26,36 @@ public class UserController {
 
     @PostMapping
     private User createUser(@RequestBody User user) {
-//        if (users.containsKey(user.getId())) {
-//            log.error("Пользователь уже сущесивует: {}", user.toString());
-//            throw new ValidationException("Пользователь с id=" + user.getId() + " уже существует");
-//        }
         if (isValid(user)) {
-            log.info("Добавлен пользователь: {}", user);
+            user.setId(++id);
+            try {
+                if (user.getName().isBlank() || user.getName().isEmpty()) {
+                    user.setName(user.getLogin());
+                    log.info("Пустое имя пользователя, будет использован логин: {}", user);
+                }
+            } catch (NullPointerException e) {
+                user.setName(user.getLogin());
+                log.info("Имя пользователя null, будет использован логин: {}", user);
+            }
             users.put(user.getId(), user);
+            log.info("Добавлен пользователь: {}", user);
         }
         return user;
     }
 
     @PutMapping
     private User updateUser(@RequestBody User user) {
+        if (!users.containsKey(user.getId())) {
+            log.error("Некорректный id пользователя: {}", user);
+            throw new ValidationException("Пользователя с таким id не существует");
+        }
         if (isValid(user)) {
-            log.info("Обновлён пользователь: {}", user);
+            if (user.getName().isBlank() || user.getName().isEmpty()) {
+                user.setName(user.getLogin());
+                log.info("Пустое имя пользователя, будет использован логин: {}", user);
+            }
             users.put(user.getId(), user);
+            log.info("Обновлён пользователь: {}", user);
         }
         return user;
     }
@@ -53,10 +68,6 @@ public class UserController {
         if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             log.error("Некорректный логин: {}", user);
             throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-        }
-        if (user.getName().isBlank()) {
-            user.setName(user.getLogin());
-            log.info("Пустое имя пользователя, будет использован логин: {}", user);
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {
             log.error("Некорректная дата рождения: {}", user);
