@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy= ReleaseDateConstraintValidator.class)
+@Constraint(validatedBy = ReleaseDateConstraintValidator.class)
 public @interface ReleaseDateConstraint {
     String message() default "Дата релиза не может быть ранее 28.12.1895.";
     Class<?>[] groups() default {};
