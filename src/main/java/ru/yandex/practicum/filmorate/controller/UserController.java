@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,54 +26,34 @@ public class UserController {
     }
 
     @PostMapping
-    private User createUser(@RequestBody User user) {
-        if (isValid(user)) {
-            user.setId(++id);
-            try {
-                if (user.getName().isBlank() || user.getName().isEmpty()) {
-                    user.setName(user.getLogin());
-                    log.info("Пустое имя пользователя, будет использован логин: {}", user);
-                }
-            } catch (NullPointerException e) {
-                user.setName(user.getLogin());
-                log.info("Имя пользователя null, будет использован логин: {}", user);
-            }
-            users.put(user.getId(), user);
-            log.info("Добавлен пользователь: {}", user);
-        }
-        return user;
-    }
-
-    @PutMapping
-    private User updateUser(@RequestBody User user) {
-        if (!users.containsKey(user.getId())) {
-            log.error("Некорректный id пользователя: {}", user);
-            throw new ValidationException("Пользователя с таким id не существует");
-        }
-        if (isValid(user)) {
+    private User createUser(@Valid @RequestBody User user) {
+        user.setId(++id);
+        try {
             if (user.getName().isBlank() || user.getName().isEmpty()) {
                 user.setName(user.getLogin());
                 log.info("Пустое имя пользователя, будет использован логин: {}", user);
             }
-            users.put(user.getId(), user);
-            log.info("Обновлён пользователь: {}", user);
+        } catch (NullPointerException e) {
+            user.setName(user.getLogin());
+            log.info("Имя пользователя null, будет использован логин: {}", user);
         }
+        users.put(user.getId(), user);
+        log.info("Добавлен пользователь: {}", user);
         return user;
     }
 
-    private boolean isValid(User user) {
-        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            log.error("Некорректный адрес электронной почты {}", user);
-            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ '@'");
+    @PutMapping
+    private User updateUser(@Valid @RequestBody User user) {
+        if (!users.containsKey(user.getId())) {
+            log.error("Некорректный id пользователя: {}", user);
+            throw new ValidationException("Пользователя с таким id не существует");
         }
-        if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            log.error("Некорректный логин: {}", user);
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
+        if (user.getName().isBlank() || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+            log.info("Пустое имя пользователя, будет использован логин: {}", user);
         }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("Некорректная дата рождения: {}", user);
-            throw new ValidationException("Дата рождения не может быть в будущем.");
-        }
-        return true;
+        users.put(user.getId(), user);
+        log.info("Обновлён пользователь: {}", user);
+        return user;
     }
 }
