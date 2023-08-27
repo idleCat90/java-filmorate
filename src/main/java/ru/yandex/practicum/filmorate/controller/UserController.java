@@ -27,14 +27,9 @@ public class UserController {
     @PostMapping
     private User createUser(@Valid @RequestBody User user) {
         user.setId(generateId());
-        try {
-            if (user.getName().isBlank() || user.getName().isEmpty()) {
-                user.setName(user.getLogin());
-                log.info("Пустое имя пользователя, будет использован логин: {}", user);
-            }
-        } catch (NullPointerException e) {
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
-            log.info("Имя пользователя null, будет использован логин: {}", user);
+            log.info("Пустое имя пользователя, будет использован логин: {}", user);
         }
         users.put(user.getId(), user);
         log.info("Добавлен пользователь: {}", user);
@@ -47,7 +42,7 @@ public class UserController {
             log.error("Некорректный id пользователя: {}", user);
             throw new ValidationException("Пользователя с таким id не существует");
         }
-        if (user.getName().isBlank() || user.getName().isEmpty()) {
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
             log.info("Пустое имя пользователя, будет использован логин: {}", user);
         }
