@@ -17,7 +17,7 @@ import java.util.Map;
 public class UserController {
 
     private final Map<Integer, User> users = new HashMap<>();
-    private int id = 0;
+    private int idCount = 0;
 
     @GetMapping
     private List<User> getAllUsers() {
@@ -26,7 +26,7 @@ public class UserController {
 
     @PostMapping
     private User createUser(@Valid @RequestBody User user) {
-        user.setId(++id);
+        user.setId(generateId());
         try {
             if (user.getName().isBlank() || user.getName().isEmpty()) {
                 user.setName(user.getLogin());
@@ -54,5 +54,9 @@ public class UserController {
         users.put(user.getId(), user);
         log.info("Обновлён пользователь: {}", user);
         return user;
+    }
+
+    private int generateId() {
+        return ++idCount;
     }
 }

@@ -17,7 +17,7 @@ import java.util.Map;
 public class FilmController {
 
     private final Map<Integer, Film> films = new HashMap<>();
-    private int id = 0;
+    private int idCount = 0;
 
     @GetMapping
     private List<Film> getAllFilms() {
@@ -26,7 +26,7 @@ public class FilmController {
 
     @PostMapping
     private Film addFilm(@Valid @RequestBody Film film) {
-        film.setId(++id);
+        film.setId(generateId());
         films.put(film.getId(), film);
         log.info("Добавлен фильм: {}", film);
         return film;
@@ -42,5 +42,9 @@ public class FilmController {
         log.info("Обновлён фильм: {}", film);
 
         return film;
+    }
+
+    private int generateId() {
+        return ++idCount;
     }
 }
