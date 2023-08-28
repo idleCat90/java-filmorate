@@ -25,7 +25,7 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
-	public void releaseDateConstraintValidator_whenDateIsBeforeConstraint_givesViolation() {
+	public void releaseDateConstraintValidator_whenDateIsBeforeConstraint_givesReleaseDateConstraintViolation() {
 		final Film film = new Film();
 		film.setName("Test film");
 		film.setDescription("Description");
@@ -40,7 +40,7 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
-	public void releaseDateConstraintValidator_whenDateIsNull_givesViolation() {
+	public void releaseDateConstraintValidator_whenDateIsNull_givesNotNullViolation() {
 		final Film film = new Film();
 		film.setName("Test film");
 		film.setDescription("Description");
