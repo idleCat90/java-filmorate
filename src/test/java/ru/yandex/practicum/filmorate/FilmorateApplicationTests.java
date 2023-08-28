@@ -40,6 +40,21 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
+	public void releaseDateConstraintValidator_whenDateIsNull_givesViolation() {
+		final Film film = new Film();
+		film.setName("Test film");
+		film.setDescription("Description");
+		film.setDuration(200);
+		film.setReleaseDate(null);
+
+		Set<ConstraintViolation<Film>> validates = validator.validate(film);
+
+		assertFalse(validates.isEmpty());
+		validates.stream().map(ConstraintViolation::getMessage)
+				.forEach(System.out::println);
+	}
+
+	@Test
 	public void releaseDateConstraintValidator_whenDateEqualsConstraint_givesNoViolation() {
 		final Film film = new Film();
 		film.setName("Test film");
