@@ -7,6 +7,8 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -28,5 +30,25 @@ public class UserService {
 
     public User updateUser(@Valid User user) {
         return userStorage.updateUser(user);
+    }
+
+    public User addFriend(Long id, Long friendId) {
+        userStorage.getUserById(id).getFriends().add(friendId);
+        userStorage.getUserById(friendId).getFriends().add(id);
+        return userStorage.getUserById(id);
+    }
+
+    public User removeFriend(Long id, Long friendId) {
+        userStorage.getUserById(id).getFriends().remove(friendId);
+        userStorage.getUserById(friendId).getFriends().remove(id);
+        return userStorage.getUserById(id);
+    }
+
+    public Collection<User> findCommonFriends(Long id, Long otherId) {
+        Set<Long> friends2 = userStorage.getUserById(otherId).getFriends();
+        return userStorage.getUserById(id).getFriends().stream()
+                .filter(friends2::contains)
+                .map(userStorage::getUserById)
+                .collect(Collectors.toSet());
     }
 }
