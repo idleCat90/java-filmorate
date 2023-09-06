@@ -5,20 +5,17 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
 
-    private final Map<Integer, Film> films = new HashMap<>();
-    private int idCount = 0;
+    private final Map<Long, Film> films = new HashMap<>();
+    private Long idCount = 0L;
 
     @Override
-    public List<Film> getAllFilms() {
+    public Collection<Film> getAllFilms() {
         return new ArrayList<>(films.values());
     }
 
@@ -41,7 +38,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
-    private int generateId() {
+    private Long generateId() {
         return ++idCount;
     }
 }

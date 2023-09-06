@@ -1,30 +1,35 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import javax.validation.Valid;
-import java.util.List;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private UserStorage userStorage;
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
-    private List<User> getAllUsers() {
-        return userStorage.getAllUsers();
+    private Collection<User> getAllUsers() {
+        return userService.getAllUsers();
     }
 
     @PostMapping
-    private User createUser(@Valid @RequestBody User user) {
-        return userStorage.createUser(user);
+    private User createUser(@RequestBody User user) {
+        return userService.addUser(user);
     }
 
     @PutMapping
-    private User updateUser(@Valid @RequestBody User user) {
-        return userStorage.updateUser(user);
+    private User updateUser(@RequestBody User user) {
+        return userService.updateUser(user);
     }
 }

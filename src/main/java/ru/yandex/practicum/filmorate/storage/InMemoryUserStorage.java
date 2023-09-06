@@ -5,24 +5,21 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
 public class InMemoryUserStorage implements UserStorage {
 
-    private final Map<Integer, User> users = new HashMap<>();
-    private int idCount = 0;
+    private final Map<Long, User> users = new HashMap<>();
+    private Long idCount = 0L;
     @Override
-    public List<User> getAllUsers() {
+    public Collection<User> getAllUsers() {
         return new ArrayList<>(users.values());
     }
 
     @Override
-    public User createUser(User user) {
+    public User addUser(User user) {
         user.setId(generateId());
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
@@ -48,7 +45,7 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
-    private int generateId() {
+    private Long generateId() {
         return ++idCount;
     }
 }

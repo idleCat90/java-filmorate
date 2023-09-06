@@ -13,7 +13,7 @@ import ru.yandex.practicum.filmorate.validator.ReleaseDateConstraint;
 @Data
 public class Film {
 
-    private int id;
+    private Long id;
     @NotBlank
     private String name;
     @Size(max = 200)
