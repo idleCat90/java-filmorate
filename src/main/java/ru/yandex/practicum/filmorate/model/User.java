@@ -6,6 +6,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 
 @Data
@@ -20,4 +22,16 @@ public class User {
     @Past
     private LocalDate birthday;
     private Set<Long> friends;
+
+    public Collection<Long> getFriends() {
+        return new ArrayList<>(friends);
+    }
+
+    public void addFriend(Long id) {
+        friends.add(id);
+    }
+
+    public void removeFriend(Long id) {
+        friends.remove(id);
+    }
 }
