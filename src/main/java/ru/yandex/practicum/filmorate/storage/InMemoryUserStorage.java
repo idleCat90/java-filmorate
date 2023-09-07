@@ -13,6 +13,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Long, User> users = new HashMap<>();
     private Long idCount = 0L;
+
     @Override
     public Collection<User> getAllUsers() {
         return new ArrayList<>(users.values());
