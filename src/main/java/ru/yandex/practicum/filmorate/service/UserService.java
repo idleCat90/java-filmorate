@@ -31,6 +31,10 @@ public class UserService {
         return userStorage.updateUser(user);
     }
 
+    public User getUserById(Long id) {
+        return userStorage.getUserById(id);
+    }
+
     public User addFriend(Long id, Long friendId) {
         userStorage.getUserById(id).addFriend(friendId);
         userStorage.getUserById(friendId).addFriend(id);
@@ -43,7 +47,13 @@ public class UserService {
         return userStorage.getUserById(id);
     }
 
-    public Collection<User> findCommonFriends(Long id, Long otherId) {
+    public Collection<User> getFriends(Long id) {
+        return userStorage.getUserById(id).getFriends().stream()
+                .map(this::getUserById)
+                .collect(Collectors.toList());
+    }
+
+    public Collection<User> getCommonFriends(Long id, Long otherId) {
         Collection<Long> friends = userStorage.getUserById(otherId).getFriends();
         return userStorage.getUserById(id).getFriends().stream()
                 .filter(friends::contains)
