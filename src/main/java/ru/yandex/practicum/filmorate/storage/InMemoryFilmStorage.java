@@ -2,9 +2,9 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.IncorrectIdException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import javax.validation.ValidationException;
 import java.util.*;
 
 @Slf4j
@@ -31,7 +31,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film updateFilm(Film film) {
         if (!films.containsKey(film.getId())) {
             log.error("Некорректный id фильма: {}", film);
-            throw new ValidationException("Нет фильма с таким id");
+            throw new IncorrectIdException("Не существует фильма с id=" + film.getId());
         }
         films.put(film.getId(), film);
         log.info("Обновлён фильм: {}", film);
@@ -40,6 +40,10 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(Long id) {
+        if (!films.containsKey(id)) {
+            log.error("Не найден фильм с id={}", id);
+            throw new IncorrectIdException("Не найден фильм с id=" + id);
+        }
         return films.get(id);
     }
 
