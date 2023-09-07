@@ -8,6 +8,7 @@ import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -21,7 +22,7 @@ public class User {
     private String name;
     @Past
     private LocalDate birthday;
-    private Set<Long> friends;
+    private Set<Long> friends = new HashSet<>();
 
     public Collection<Long> getFriends() {
         return new ArrayList<>(friends);

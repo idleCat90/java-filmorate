@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import ru.yandex.practicum.filmorate.validator.ReleaseDateConstraint;
@@ -26,7 +27,7 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private int duration;
-    private Set<Long> likes;
+    private Set<Long> likes = new HashSet<>();
 
     public Collection<Long> getLikes() {
         return new ArrayList<>(likes);
