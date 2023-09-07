@@ -32,7 +32,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    private Map<String, String> handleThrowable (final Throwable e) {
+    private Map<String, String> handleThrowable(final Throwable e) {
         return Map.of(
                 "error", "Непредвиденная ошибка",
                 "errorMessage", e.getMessage()
