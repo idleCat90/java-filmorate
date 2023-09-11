@@ -4,7 +4,6 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.validator.LoginConstraint;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ public class User {
     private Long id;
     @Email
     private String email;
-    @NotBlank
     @LoginConstraint
     private String login;
     private String name;

@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import ru.yandex.practicum.filmorate.validator.ReleaseDateConstraint;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
-import ru.yandex.practicum.filmorate.validator.ReleaseDateConstraint;
 
 @Data
 public class Film {
@@ -22,7 +20,6 @@ public class Film {
     private String name;
     @Size(max = 200)
     private String description;
-    @NotNull
     @ReleaseDateConstraint
     private LocalDate releaseDate;
     @Positive

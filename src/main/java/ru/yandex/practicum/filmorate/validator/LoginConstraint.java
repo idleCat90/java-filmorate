@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = LoginConstraintValidator.class)
 public @interface LoginConstraint {
-    String message() default "login не может содержать пробелы.";
+    String message() default "Login не может быть пустым или содержать пробелы.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
