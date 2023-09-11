@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = ReleaseDateConstraintValidator.class)
-public @interface ReleaseDateConstraint {
-    String message() default "Дата релиза не может быть пустой или ранее 28.12.1895.";
+@Constraint(validatedBy = LoginConstraintValidator.class)
+public @interface LoginConstraint {
+    String message() default "Login не может быть пустым или содержать пробелы.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
