@@ -30,7 +30,12 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
-        return filmStorage.updateFilm(film);
+        var f = filmStorage.updateFilm(film);
+        if (f == null) {
+            log.error("filmService: фильм не найден: {}", film);
+            throw new IncorrectIdException("Несуществующий id фильма");
+        }
+        return f;
     }
 
     public Film getFilmById(Long id) {
@@ -48,7 +53,7 @@ public class FilmService {
             log.error("filmService: фильм с таким id не найден: {}", id);
             throw new IncorrectIdException("Несуществующий id фильма");
         }
-        // TODO проверить валидность пользователя
+        // TODO проверить валидность пользователя (через внедрение userService?)
         film.addLike(userId);
         return film;
     }

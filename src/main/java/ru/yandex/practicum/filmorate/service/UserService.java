@@ -31,7 +31,12 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        return userStorage.updateUser(user);
+        var u = userStorage.updateUser(user);
+        if (u == null) {
+            log.error("userService: пользователь не найден: {}", user);
+            throw new IncorrectIdException("Несуществующий id пользователя");
+        }
+        return u;
     }
 
     public User getUserById(Long id) {
