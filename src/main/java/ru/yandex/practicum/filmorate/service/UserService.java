@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.IncorrectIdException;
@@ -9,10 +10,12 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class UserService {
 
     private final UserStorage userStorage;
+
 
     @Autowired
     public UserService(UserStorage userStorage) {
@@ -32,54 +35,78 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        if (!isFoundId(id)) {
-            throw new IncorrectIdException("Некорректный id");
+        var user = userStorage.getUserById(id);
+        if (user == null) {
+            log.error("userService: пользователь с таким id не найден: {}", id);
+            throw new IncorrectIdException("Несуществующий id пользователя");
         }
-        return userStorage.getUserById(id);
+        return user;
     }
 
     public User addFriend(Long id, Long friendId) {
-        if (!isFoundId(id) || !isFoundId(friendId)) {
-            throw new IncorrectIdException("Некорректный id");
+        var user = userStorage.getUserById(id);
+        var friend = userStorage.getUserById(friendId);
+        if (user == null) {
+            log.error("userService: пользователь с таким id не найден: {}", id);
+            throw new IncorrectIdException("Несуществующий id пользователя");
         }
-        userStorage.getUserById(id).addFriend(friendId);
-        userStorage.getUserById(friendId).addFriend(id);
-        return userStorage.getUserById(id);
+        if (friend == null) {
+            log.error("userService: пользователь с таким id не найден: {}", friendId);
+            throw new IncorrectIdException("Несуществующий id пользователя");
+        }
+        user.addFriend(friendId);
+        friend.addFriend(id);
+        log.info("userService: у пользователя новый друг: {}", user);
+        return user;
     }
 
     public User removeFriend(Long id, Long friendId) {
-        if (!isFoundId(id) || !isFoundId(friendId)) {
-            throw new IncorrectIdException("Некорректный id");
+        var user = userStorage.getUserById(id);
+        var friend = userStorage.getUserById(friendId);
+        if (user == null) {
+            log.error("userService: пользователь с таким id не найден: {}", id);
+            throw new IncorrectIdException("Несуществующий id пользователя");
         }
-        userStorage.getUserById(id).removeFriend(friendId);
-        userStorage.getUserById(friendId).removeFriend(id);
+        if (friend == null) {
+            log.error("userService: пользователь с таким id не найден: {}", friendId);
+            throw new IncorrectIdException("Несуществующий id пользователя");
+        }
+        if (!user.getFriends().contains(friend.getId())) {
+            log.error("В друзьях нет пользователя с таким id: {}", friendId);
+            throw new IncorrectIdException("Неверный id пользователя");
+        }
+        user.removeFriend(friendId);
+        friend.removeFriend(id);
+        log.info("userService: у пользователя удалён друг: {}", user);
         return userStorage.getUserById(id);
     }
 
     public Collection<User> getFriends(Long id) {
-        if (!isFoundId(id)) {
-            throw new IncorrectIdException("Некорректный id");
+        var user = userStorage.getUserById(id);
+        if (user == null) {
+            log.error("userService: пользователь с таким id не найден: {}", id);
+            throw new IncorrectIdException("Несуществующий id пользователя");
         }
-        return userStorage.getUserById(id).getFriends().stream()
+        return user.getFriends().stream()
                 .map(this::getUserById)
                 .collect(Collectors.toList());
     }
 
     public Collection<User> getCommonFriends(Long id, Long otherId) {
-        if (!isFoundId(id) || !isFoundId(otherId)) {
-            throw new IncorrectIdException("Некорректный id");
+        var user = userStorage.getUserById(id);
+        var other = userStorage.getUserById(otherId);
+        if (user == null) {
+            log.error("userService: пользователь с таким id не найден: {}", id);
+            throw new IncorrectIdException("Несуществующий id пользователя");
         }
-        Collection<Long> friends = userStorage.getUserById(otherId).getFriends();
-        return userStorage.getUserById(id).getFriends().stream()
-                .filter(friends::contains)
+        if (other == null) {
+            log.error("userService: пользователь с таким id не найден: {}", otherId);
+            throw new IncorrectIdException("Несуществующий id пользователя");
+        }
+        Collection<Long> otherFriends = other.getFriends();
+        return user.getFriends().stream()
+                .filter(otherFriends::contains)
                 .map(userStorage::getUserById)
                 .collect(Collectors.toSet());
-    }
-
-    private boolean isFoundId(Long id) {
-        return userStorage.getAllUsers().stream()
-                .map(User::getId)
-                .collect(Collectors.toList())
-                .contains(id);
     }
 }

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.IncorrectIdException;
@@ -9,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class FilmService {
 
@@ -32,29 +34,37 @@ public class FilmService {
     }
 
     public Film getFilmById(Long id) {
-        if (!isFoundId(id)) {
-            throw new IncorrectIdException("Фильм не найден");
+        var film = filmStorage.getFilmById(id);
+        if (film == null) {
+            log.error("filmService: фильм с таким id не найден: {}", id);
+            throw new IncorrectIdException("Несуществующий id фильма");
         }
-        return filmStorage.getFilmById(id);
+        return film;
     }
 
     public Film addLike(Long id, Long userId) {
-        if (!isFoundId(id)) {
-            throw new IncorrectIdException("Фильм не найден");
+        var film = filmStorage.getFilmById(id);
+        if (film == null) {
+            log.error("filmService: фильм с таким id не найден: {}", id);
+            throw new IncorrectIdException("Несуществующий id фильма");
         }
-        filmStorage.getFilmById(id).addLike(userId);
-        return filmStorage.getFilmById(id);
+        // TODO проверить валидность пользователя
+        film.addLike(userId);
+        return film;
     }
 
     public Film removeLike(Long id, Long userId) {
-        if (!isFoundId(id)) {
-            throw new IncorrectIdException("Фильм не найден");
+        var film = filmStorage.getFilmById(id);
+        if (film == null) {
+            log.error("filmService: фильм с таким id не найден: {}", id);
+            throw new IncorrectIdException("Несуществующий id фильма");
         }
-        if (!filmStorage.getFilmById(id).getLikes().contains(userId)) {
-            throw new IncorrectIdException("Лайк от этого пользователя не найден");
+        if (!film.getLikes().contains(userId)) {
+            log.error("filmService: лайк от пользователя с таким id не найден: {}", userId);
+            throw new IncorrectIdException("Неверный id пользователя");
         }
-        filmStorage.getFilmById(id).removeLike(userId);
-        return filmStorage.getFilmById(id);
+        film.removeLike(userId);
+        return film;
     }
 
     public Collection<Film> getPopularFilms(int count) {
@@ -63,12 +73,4 @@ public class FilmService {
                 .limit(count)
                 .collect(Collectors.toList());
     }
-
-    private boolean isFoundId(Long id) {
-        return filmStorage.getAllFilms().stream()
-                .map(Film::getId)
-                .collect(Collectors.toList())
-                .contains(id);
-    }
-
 }
