@@ -1,7 +1,6 @@
 # java-filmorate
 Template repository for Filmorate project.
 
-# java-filmorate
 **[Ссылка на ER diagram проекта](/filmorate-ER-diagram.png)**
 ![](/filmorate-ER-diagram.png)
 
