@@ -5,7 +5,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.exception.IncorrectIdException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import java.util.Map;
 
@@ -14,7 +14,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    private Map<String, String> handleIncorrectId(final IncorrectIdException e) {
+    private Map<String, String> handleIncorrectId(final NotFoundException e) {
         return Map.of(
                 "error", "id не найден",
                 "errorMessage", e.getMessage()
