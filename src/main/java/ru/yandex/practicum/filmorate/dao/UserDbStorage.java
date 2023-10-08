@@ -103,7 +103,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void deleteFriend(int id, int friendId) {
-        String sql = "SELECT * FROM public_friends WHERE user_id = ? AND friend_id = ?;";
+        String sql = "SELECT * FROM public.friends WHERE user_id = ? AND friend_id = ?;";
         SqlRowSet setDirect = jdbcTemplate.queryForRowSet(sql, id, friendId);
         boolean isDirectNotEmpty = setDirect.next();
         if (isDirectNotEmpty) {
@@ -113,7 +113,7 @@ public class UserDbStorage implements UserStorage {
                 jdbcTemplate.update(sqlDelete, id, friendId);
             } else {
                 jdbcTemplate.update(sqlDelete, id, friendId);
-                String sqlUpdate = "INSERT INTO public_friends (user_id, friend_id, accepted) VALUES (?, ?, ?);";
+                String sqlUpdate = "INSERT INTO public.friends (user_id, friend_id, accepted) VALUES (?, ?, ?);";
                 jdbcTemplate.update(sqlUpdate, friendId, id, false);
             }
         } else {

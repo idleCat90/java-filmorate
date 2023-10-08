@@ -39,7 +39,7 @@ public class GenreDbStorage {
     private Genre makeGenre(ResultSet rs) throws SQLException {
         return new Genre(
                 rs.getInt("id"),
-                rs.getString("title")
+                rs.getString("genre")
         );
     }
 }

@@ -74,7 +74,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(int id) {
-        String sql = "SELECT * FROM public.films f JOIN ratings r ON f.rating_id = r.id WHERE id = ?";
+        String sql = "SELECT * FROM public.films f JOIN ratings r ON f.rating_id = r.id WHERE f.id = ?";
         List<Film> query = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id);
         if (!query.isEmpty()) {
             Map<Integer, List<Genre>> genres = getGenres(query);
@@ -158,7 +158,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private int getId() {
-        String sqlGetId = "SELECT COUNT(film_id) AS id FROM public.films;";
+        String sqlGetId = "SELECT COUNT(id) AS id FROM public.films;";
         SqlRowSet set = jdbcTemplate.queryForRowSet(sqlGetId);
         set.next();
         return set.getInt(1) + 1;

@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS public.users
 	email varchar(200) NOT NULL,
 	login varchar(50) NOT NULL,
 	name varchar(200) NOT NULL,
-	birthday date NOT NULL,
+	birthday date NOT NULL
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS user_email_uindex ON public.users (email);
