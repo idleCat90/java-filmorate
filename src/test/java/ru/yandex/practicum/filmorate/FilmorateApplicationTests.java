@@ -27,7 +27,7 @@ class FilmorateApplicationTests {
 	@Test
 	public void releaseDateConstraintValidator_whenDateIsBeforeConstraint_givesReleaseDateConstraintViolation() {
 		final Film film = new Film();
-		film.setName("Test film");
+		film.setTitle("Test film");
 		film.setDescription("Description");
 		film.setDuration(200);
 		film.setReleaseDate(LocalDate.of(1500, 1, 1));
@@ -42,7 +42,7 @@ class FilmorateApplicationTests {
 	@Test
 	public void releaseDateConstraintValidator_whenDateIsNull_givesNotNullViolation() {
 		final Film film = new Film();
-		film.setName("Test film");
+		film.setTitle("Test film");
 		film.setDescription("Description");
 		film.setDuration(200);
 		film.setReleaseDate(null);
@@ -57,7 +57,7 @@ class FilmorateApplicationTests {
 	@Test
 	public void releaseDateConstraintValidator_whenDateEqualsConstraint_givesNoViolation() {
 		final Film film = new Film();
-		film.setName("Test film");
+		film.setTitle("Test film");
 		film.setDescription("Description");
 		film.setDuration(200);
 		film.setReleaseDate(LocalDate.of(1895, 12, 28));
