@@ -13,7 +13,7 @@ import java.util.List;
 public class Film {
     private int id;
     @NotBlank
-    private String title;
+    private String name;
     @Size(max = 200)
     @NotNull
     private String description;

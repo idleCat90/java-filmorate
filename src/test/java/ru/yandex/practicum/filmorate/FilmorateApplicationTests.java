@@ -214,10 +214,10 @@ class FilmorateApplicationTests {
 	public void testUpdateFilm() {
 		filmStorage.createFilm(getFilms().get(0));
 		Film filmToUpdate = filmStorage.getFilmById(1);
-		filmToUpdate.setTitle("New name for first film");
+		filmToUpdate.setName("New name for first film");
 		filmStorage.updateFilm(filmToUpdate);
 		Film filmFromDb = filmStorage.getFilmById(1);
-		assertEquals(filmFromDb.getTitle(), "New name for first film");
+		assertEquals(filmFromDb.getName(), "New name for first film");
 	}
 
 	@Test
@@ -226,7 +226,7 @@ class FilmorateApplicationTests {
 		filmStorage.createFilm(getFilms().get(0));
 		Film filmFromDb = filmStorage.getFilmById(1);
 		assertEquals(filmFromDb.getId(), 1);
-		assertEquals(filmFromDb.getTitle(), "First film");
+		assertEquals(filmFromDb.getName(), "First film");
 		assertEquals(filmFromDb.getDescription(), "Description of first film");
 		assertEquals(filmFromDb.getReleaseDate(), LocalDate.of(1960, 12, 5));
 	}
@@ -438,7 +438,7 @@ class FilmorateApplicationTests {
 		return List.of(
 				Film.builder()
 						.id(1)
-						.title("First film")
+						.name("First film")
 						.description("Description of first film")
 						.releaseDate(LocalDate.of(1960, 12, 5))
 						.duration(120)
@@ -446,7 +446,7 @@ class FilmorateApplicationTests {
 						.build(),
 				Film.builder()
 						.id(2)
-						.title("Second film")
+						.name("Second film")
 						.description("Description of second film")
 						.releaseDate(LocalDate.of(1990, 12, 5))
 						.duration(200)
@@ -454,7 +454,7 @@ class FilmorateApplicationTests {
 						.build(),
 				Film.builder()
 						.id(3)
-						.title("Third film")
+						.name("Third film")
 						.description("Description of third film")
 						.releaseDate(LocalDate.of(2002, 12, 5))
 						.duration(20)

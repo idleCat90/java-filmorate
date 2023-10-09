@@ -29,7 +29,7 @@ class FilmTest {
     @Test
     public void invalidFilmNameShouldFailValidation() {
         Film film = getFilm();
-        film.setTitle(" ");
+        film.setName(" ");
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty());
     }
@@ -62,7 +62,7 @@ class FilmTest {
 
     private Film getFilm() {
         return Film.builder()
-            .title("nisi eiusmod")
+            .name("nisi eiusmod")
             .description("adipisicing")
             .releaseDate(LocalDate.of(1967, 3, 25))
             .duration(100)

@@ -42,7 +42,7 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "INSERT INTO public.films\n" +
                 "(id, title, description, release_date, duration, rating_id)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?);";
-        jdbcTemplate.update(sql, film.getId(), film.getTitle(), film.getDescription(), film.getReleaseDate(),
+        jdbcTemplate.update(sql, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), mpaId);
         film.setMpa(makeMpa(mpaId));
         film.setLikesCount(getLikesSet(film.getId()).size());
@@ -58,7 +58,7 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "UPDATE public.films SET " +
                 "title = ?, description = ?, release_date = ?, duration = ?, rating_id = ?\n" +
                 "WHERE id = ?;";
-        jdbcTemplate.update(sql, film.getTitle(), film.getDescription(), film.getReleaseDate(),
+        jdbcTemplate.update(sql, film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), mpaId, film.getId());
         film.setMpa(makeMpa(mpaId));
         film.setLikesCount(getLikesSet(film.getId()).size());
@@ -121,7 +121,7 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> getPopularFilms(int count) {
         String sql = "SELECT * FROM public.films f\n" +
                 "JOIN public.ratings r ON f.rating_id = r.id\n" +
-                "WHERE id IN (SELECT film_id FROM public.likes GROUP BY film_id ORDER BY COUNT(user_id) DESC);";
+                "WHERE f.id IN (SELECT film_id FROM public.likes GROUP BY film_id ORDER BY COUNT(user_id) DESC);";
         List<Film> query = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
         if (!query.isEmpty()) {
             Map<Integer, List<Genre>> genres = getGenres(query);
@@ -169,7 +169,7 @@ public class FilmDbStorage implements FilmStorage {
             int id = rs.getInt("id");
             Film film = Film.builder()
                     .id(id)
-                    .title(rs.getString("title"))
+                    .name(rs.getString("title"))
                     .description(rs.getString("description"))
                     .releaseDate(rs.getDate("release_date").toLocalDate())
                     .duration(rs.getInt("duration"))
