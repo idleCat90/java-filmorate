@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.dao;
+package ru.yandex.practicum.filmorate.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -6,6 +6,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.dao.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.*;
@@ -128,32 +129,6 @@ public class UserDbStorage implements UserStorage {
             }
         }
     }
-
-//    @Override
-//    public List<User> getCommonFriends(int id1, int id2) {
-//        String sql = "SELECT * FROM public.users u \n" +
-//                "WHERE id IN \n" +
-//                "(\n" +
-//                "SELECT *\n" +
-//                "FROM\n" +
-//                "(SELECT f.friend_id AS friends\n" +
-//                "FROM public.friends f\n" +
-//                "WHERE f.user_id = ?\n" +
-//                "UNION\n" +
-//                "SELECT f.user_id\n" +
-//                "FROM public.friends f \n" +
-//                "WHERE (f.friends_id = ? AND f.accepted = true))\n" +
-//                "WHERE friends IN (\n" +
-//                "SELECT f.friend_id AS friends\n" +
-//                "FROM public.friends f\n" +
-//                "WHERE f.user_id = ?\n" +
-//                "UNION\n" +
-//                "SELECT f.user_id\n" +
-//                "FROM public.friends f \n" +
-//                "WHERE (f.friend_id = ? AND f.accepted = true))\n" +
-//                ");";
-//        return jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), id1, id1, id2, id2);
-//    }
 
     @Override
     public List<User> getCommonFriends(int id1, int id2) {
