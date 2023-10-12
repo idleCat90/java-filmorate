@@ -1,117 +1,74 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.IncorrectIdException;
+import ru.yandex.practicum.filmorate.dao.UserStorage;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.List;
 
-@Slf4j
 @Service
 public class UserService {
 
     private final UserStorage userStorage;
-
 
     @Autowired
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
-    public Collection<User> getAllUsers() {
-        return userStorage.getAllUsers();
+    public void addFriend(int id, int friendId) {
+        if (!isUserExists(id) && !isUserExists(friendId)) {
+            throw new NotFoundException("Пользователь не существует.");
+        }
+        userStorage.checkAndUpdateFriends(id, friendId);
     }
 
-    public User addUser(User user) {
-        return userStorage.addUser(user);
+    public void deleteFriend(int id, int friendId) {
+        User u = getUserById(id);
+        User friend = getUserById(friendId);
+        List<User> friends = getFriends(id);
+        if (friends.contains(friend)) {
+            userStorage.deleteFriend(id, friendId);
+        }
+    }
+
+    public List<User> getCommonFriends(int id1, int id2) {
+        return userStorage.getCommonFriends(id1, id2);
+    }
+
+    public User createUser(User user) {
+        checkIfUserNamePresent(user);
+        return userStorage.createUser(user);
+    }
+
+    public List<User> getUsers() {
+        return userStorage.getUsers();
     }
 
     public User updateUser(User user) {
-        var u = userStorage.updateUser(user);
-        if (u == null) {
-            log.error("userService: пользователь не найден: {}", user);
-            throw new IncorrectIdException("Несуществующий id пользователя");
-        }
-        return u;
+        getUserById(user.getId());
+        checkIfUserNamePresent(user);
+        return userStorage.updateUser(user);
     }
 
-    public User getUserById(Long id) {
-        var user = userStorage.getUserById(id);
-        if (user == null) {
-            log.error("userService: пользователь с таким id не найден: {}", id);
-            throw new IncorrectIdException("Несуществующий id пользователя");
-        }
-        return user;
+    public User getUserById(Integer id) {
+        return userStorage.getUserById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден."));
     }
 
-    public User addFriend(Long id, Long friendId) {
-        var user = userStorage.getUserById(id);
-        var friend = userStorage.getUserById(friendId);
-        if (user == null) {
-            log.error("userService: пользователь с таким id не найден: {}", id);
-            throw new IncorrectIdException("Несуществующий id пользователя");
-        }
-        if (friend == null) {
-            log.error("userService: пользователь с таким id не найден: {}", friendId);
-            throw new IncorrectIdException("Несуществующий id пользователя");
-        }
-        user.addFriend(friendId);
-        friend.addFriend(id);
-        log.info("userService: у пользователя новый друг: {}", user);
-        return user;
+    public List<User> getFriends(Integer id) {
+        return userStorage.getFriends(id);
     }
 
-    public User removeFriend(Long id, Long friendId) {
-        var user = userStorage.getUserById(id);
-        var friend = userStorage.getUserById(friendId);
-        if (user == null) {
-            log.error("userService: пользователь с таким id не найден: {}", id);
-            throw new IncorrectIdException("Несуществующий id пользователя");
-        }
-        if (friend == null) {
-            log.error("userService: пользователь с таким id не найден: {}", friendId);
-            throw new IncorrectIdException("Несуществующий id пользователя");
-        }
-        if (!user.getFriends().contains(friend.getId())) {
-            log.error("В друзьях нет пользователя с таким id: {}", friendId);
-            throw new IncorrectIdException("Неверный id пользователя");
-        }
-        user.removeFriend(friendId);
-        friend.removeFriend(id);
-        log.info("userService: у пользователя удалён друг: {}", user);
-        return userStorage.getUserById(id);
+    private Boolean isUserExists(Integer id) {
+        return userStorage.getUserById(id).isPresent();
     }
 
-    public Collection<User> getFriends(Long id) {
-        var user = userStorage.getUserById(id);
-        if (user == null) {
-            log.error("userService: пользователь с таким id не найден: {}", id);
-            throw new IncorrectIdException("Несуществующий id пользователя");
+    private void checkIfUserNamePresent(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
         }
-        return user.getFriends().stream()
-                .map(this::getUserById)
-                .collect(Collectors.toList());
-    }
-
-    public Collection<User> getCommonFriends(Long id, Long otherId) {
-        var user = userStorage.getUserById(id);
-        var other = userStorage.getUserById(otherId);
-        if (user == null) {
-            log.error("userService: пользователь с таким id не найден: {}", id);
-            throw new IncorrectIdException("Несуществующий id пользователя");
-        }
-        if (other == null) {
-            log.error("userService: пользователь с таким id не найден: {}", otherId);
-            throw new IncorrectIdException("Несуществующий id пользователя");
-        }
-        Collection<Long> otherFriends = other.getFriends();
-        return user.getFriends().stream()
-                .filter(otherFriends::contains)
-                .map(userStorage::getUserById)
-                .collect(Collectors.toSet());
     }
 }
